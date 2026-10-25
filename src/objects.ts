@@ -1,0 +1,4 @@
+import Phaser from 'phaser';
+import {TUNING} from './config';
+export class GardenFire {heat=1;constructor(public x:number,public y:number){} water(dt:number){const before=this.heat;this.heat=Math.max(0,this.heat-dt/TUNING.extinguishSeconds);return before>0&&this.heat===0;}}
+export function hoseTarget(x:number,y:number,tx:number,ty:number,fires:GardenFire[],fallback:boolean){const live=fires.filter(f=>f.heat>0&&Phaser.Math.Distance.Between(x,y,f.x,f.y)<TUNING.waterRange);const nearest=live.sort((a,b)=>Phaser.Math.Distance.Between(fallback?x:tx,fallback?y:ty,a.x,a.y)-Phaser.Math.Distance.Between(fallback?x:tx,fallback?y:ty,b.x,b.y))[0];if(nearest&&(fallback||Phaser.Math.Distance.Between(tx,ty,nearest.x,nearest.y)<TUNING.aimRadius))return {x:nearest.x,y:nearest.y,fire:nearest};return{x:tx,y:ty,fire:undefined};}
